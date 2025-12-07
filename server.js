@@ -72,7 +72,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(morgan('combined'));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ntandostore-v7', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb:'mongodb+srv://ntando:<123456789>@ladybug2017.xcgevpw.mongodb.net/?appName=Ladybug2017', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
