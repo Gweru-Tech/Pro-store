@@ -1,0 +1,116 @@
+services:
+  # Web Service
+  - type: web
+    name: ntandostore-v7
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: ${MONGODB_URI}
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: EMAIL_USER
+        value: ${EMAIL_USER}
+      - key: EMAIL_PASS
+        value: ${EMAIL_PASS}
+    healthCheckPath: /status
+    autoDeploy: true
+    
+    # Build and deployment settings
+    buildFilter:
+      paths:
+        - src/**/*.js
+        - public/**/*.css
+        - public/**/*.js
+        - views/**/*.ejs
+        - package.json
+        - package-lock.json
+        - .env.example
+    
+    # Static file serving
+    staticPublishGlobs:
+      - pattern: "public/**/*"
+        directory: "public"
+    
+    # Headers and security
+    headers:
+      - path: "/*"
+        name: X-Frame-Options
+        value: DENY
+      - path: "/*"
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: "/*"
+        name: X-XSS-Protection
+        value: "1; mode=block"
+      - path: "/*"
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+# MongoDB Service (using Render's MongoDB)
+databases:
+  - name: ntandostore-db
+    databaseName: ntandostore_v7
+    user: ntandostore_user
+    plan: free
+
+# Environment Variables Configuration
+envVarGroups:
+  - name: Production Settings
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEBUG
+        value: ""
+      - key: LOG_LEVEL
+        value: info
+      - key: BCRYPT_ROUNDS
+        value: "12"
+      - key: RATE_LIMIT_WINDOW
+        value: "900000"
+      - key: RATE_LIMIT_MAX
+        value: "100"
+      - key: MAX_FILE_SIZE
+        value: "10485760"
+  
+  - name: Database Connection
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+  
+  - name: Email Configuration
+    envVars:
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_SERVICE
+        value: gmail
+  
+  - name: Security Secrets
+    envVars:
+      - key: SESSION_SECRET
+        generateValue: true
+        length: 64
+      - key: JWT_SECRET
+        generateValue: true
+        length: 64
+  
+  - key: ADMIN_USERNAME
+    value: Ntando
+  - key: ADMIN_PASSWORD
+    value: Ntando
+  - key: ADMIN_EMAIL
+    value: admin@ntandostore.com
+  - key: CONTACT_EMAIL
+    value: info@ntandostore.com
+  - key: CONTACT_PHONE
+    value: "+1234567890"
