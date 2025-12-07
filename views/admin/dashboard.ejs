@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - NtandoStore v7</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+        
+        .admin-sidebar {
+            width: 250px;
+            background: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        .admin-nav {
+            list-style: none;
+        }
+        
+        .admin-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            display: block;
+            transition: var(--transition);
+        }
+        
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: var(--primary-color);
+        }
+        
+        .admin-main {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .admin-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .admin-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .admin-tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .admin-table th,
+        .admin-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .admin-table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        
+        .admin-form {
+            max-width: 600px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .file-upload {
+            border: 2px dashed #d1d5db;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background: #f0f9ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Admin Panel</h2>
+            <nav>
+                <ul class="admin-nav">
+                    <li><a href="#dashboard" class="active">📊 Dashboard</a></li>
+                    <li><a href="#courses">📚 Courses</a></li>
+                    <li><a href="#services">🛠️ Services</a></li>
+                    <li><a href="#messages">💬 Messages</a></li>
+                    <li><a href="#ads">📢 Advertisements</a></li>
+                    <li><a href="#music">🎵 Background Music</a></li>
+                    <li><a href="#settings">⚙️ Settings</a></li>
+                    <li><a href="#analytics">📈 Analytics</a></li>
+                    <li><a href="/logout">🚪 Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Admin Main Content -->
+        <main class="admin-main">
+            <!-- Admin Header -->
+            <div class="admin-header">
+                <div>
+                    <h1>Welcome, Ntando! 👋</h1>
+                    <p>NtandoStore v7 Administration Panel</p>
+                </div>
+                <div>
+                    <span id="current-time"></span>
+                    <button class="btn btn-primary" onclick="location.reload()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <!-- Admin Stats -->
+            <div class="admin-stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="total-visitors"><%= visitorCount %></div>
+                    <div>Total Visitors</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="total-courses">0</div>
+                    <div>Total Courses</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="total-services">6</div>
+                    <div>Total Services</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="unread-messages">0</div>
+                    <div>Unread Messages</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="active-ads">0</div>
+                    <div>Active Ads</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="server-uptime"><%= Math.floor(uptime / 3600) %>h</div>
+                    <div>Server Uptime</div>
+                </div>
+            </div>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <!-- Tabs -->
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="showTab('courses')">📚 Courses</button>
+                    <button class="admin-tab" onclick="showTab('services')">🛠️ Services</button>
+                    <button class="admin-tab" onclick="showTab('messages')">💬 Messages</button>
+                    <button class="admin-tab" onclick="showTab('ads')">📢 Advertisements</button>
+                    <button class="admin-tab" onclick="showTab('music')">🎵 Music Settings</button>
+                    <button class="admin-tab" onclick="showTab('settings')">⚙️ General Settings</button>
+                </div>
+
+                <!-- Courses Tab -->
+                <div id="courses-tab" class="tab-content active">
+                    <h3>Manage Courses</h3>
+                    <button class="btn btn-primary" onclick="showCourseForm()">+ Add New Course</button>
+                    
+                    <div id="course-form" style="display: none; margin-top: 2rem;">
+                        <h4>Add New Course</h4>
+                        <form class="admin-form" action="/api/admin/courses" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Course Title</label>
+                                <input type="text" name="title" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="description" class="form-textarea" required></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select name="category" class="form-input">
+                                        <option value="programming">Programming</option>
+                                        <option value="design">Design</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="business">Business</option>
+                                        <option value="premium">Premium</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Price ($)</label>
+                                    <input type="number" name="price" class="form-input" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Duration</label>
+                                    <input type="text" name="duration" class="form-input" placeholder="e.g., 10 hours" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Level</label>
+                                    <select name="level" class="form-input">
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Instructor</label>
+                                <input type="text" name="instructor" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Course Script (PDF, Video, or Text)</label>
+                                <div class="file-upload">
+                                    <input type="file" name="script" accept=".pdf,.mp4,.txt,.doc,.docx" required>
+                                    <p>Click to upload course content</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Thumbnail Image</label>
+                                <div class="file-upload">
+                                    <input type="file" name="thumbnail" accept="image/*" required>
+                                    <p>Click to upload thumbnail</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Tags (comma separated)</label>
+                                <input type="text" name="tags" class="form-input" placeholder="web, javascript, nodejs">
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn btn-primary">Save Course</button>
+                                <button type="button" class="btn" onclick="hideCourseForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table class="admin-table" style="margin-top: 2rem;">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Students</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courses-table">
+                            <tr>
+                                <td colspan="6" style="text-align: center;">Loading courses...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Services Tab -->
+                <div id="services-tab" class="tab-content">
+                    <h3>Manage Services</h3>
+                    <button class="btn btn-primary" onclick="showServiceForm()">+ Add New Service</button>
+                    
+                    <div id="service-form" style="display: none; margin-top: 2rem;">
+                        <h4>Add New Service</h4>
+                        <form class="admin-form" action="/api/admin/services" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Service Name</label>
+                                <input type="text" name="name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="description" class="form-textarea" required></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select name="category" class="form-input">
+                                        <option value="domain">Domain</option>
+                                        <option value="hosting">Hosting</option>
+                                        <option value="development">Development</option>
+                                        <option value="apps">Apps</option>
+                                        <option value="numbers">Numbers</option>
+                                        <option value="courses">Courses</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Price ($)</label>
+                                    <input type="number" name="price" class="form-input" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Service Image</label>
+                                <div class="file-upload">
+                                    <input type="file" name="image" accept="image/*" required>
+                                    <p>Click to upload service image</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Features (one per line)</label>
+                                <textarea name="features" class="form-textarea" rows="4" placeholder="Feature 1&#10;Feature 2&#10;Feature 3"></textarea>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn btn-primary">Save Service</button>
+                                <button type="button" class="btn" onclick="hideServiceForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table class="admin-table" style="margin-top: 2rem;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Availability</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="services-table">
+                            <tr>
+                                <td colspan="5" style="text-align: center;">Loading services...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Messages Tab -->
+                <div id="messages-tab" class="tab-content">
+                    <h3>Contact Messages</h3>
+                    <div id="messages-container">
+                        <p>Loading messages...</p>
+                    </div>
+                </div>
+
+                <!-- Ads Tab -->
+                <div id="ads-tab" class="tab-content">
+                    <h3>Manage Advertisements</h3>
+                    <button class="btn btn-primary" onclick="showAdForm()">+ Add New Ad</button>
+                    
+                    <div id="ad-form" style="display: none; margin-top: 2rem;">
+                        <h4>Add New Advertisement</h4>
+                        <form class="admin-form" action="/api/admin/ads" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Ad Title</label>
+                                <input type="text" name="title" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="description" class="form-textarea" required></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Position</label>
+                                    <select name="position" class="form-input">
+                                        <option value="header">Header</option>
+                                        <option value="sidebar">Sidebar</option>
+                                        <option value="footer">Footer</option>
+                                        <option value="popup">Popup</option>
+                                        <option value="banner">Banner</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Link URL</label>
+                                    <input type="url" name="link" class="form-input" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Ad Image</label>
+                                <div class="file-upload">
+                                    <input type="file" name="image" accept="image/*" required>
+                                    <p>Click to upload ad image</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn btn-primary">Save Ad</button>
+                                <button type="button" class="btn" onclick="hideAdForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table class="admin-table" style="margin-top: 2rem;">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                                <th>Clicks</th>
+                                <th>Impressions</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ads-table">
+                            <tr>
+                                <td colspan="6" style="text-align: center;">Loading advertisements...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Music Tab -->
+                <div id="music-tab" class="tab-content">
+                    <h3>Background Music Settings</h3>
+                    <form class="admin-form" action="/api/admin/music" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>Upload Music File</label>
+                            <div class="file-upload">
+                                <input type="file" name="music" accept="audio/*">
+                                <p>Click to upload background music (MP3, WAV, etc.)</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="isActive"> Enable Background Music
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Volume (0-100)</label>
+                            <input type="range" name="volume" min="0" max="100" value="50">
+                            <span id="volume-display">50</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Music Settings</button>
+                    </form>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content">
+                    <h3>General Settings</h3>
+                    <form class="admin-form" action="/api/admin/settings" method="POST">
+                        <div class="form-group">
+                            <label>Site Name</label>
+                            <input type="text" name="siteName" class="form-input" value="NtandoStore v7">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Email</label>
+                            <input type="email" name="contactEmail" class="form-input" value="info@ntandostore.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Phone</label>
+                            <input type="tel" name="contactPhone" class="form-input" value="+1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea name="address" class="form-textarea">123 Business Ave, Tech City, TC 12345</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="maintenance"> Enable Maintenance Mode
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Maintenance Message</label>
+                            <textarea name="maintenanceMessage" class="form-textarea" placeholder="Message to show during maintenance"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load tab-specific data
+            loadTabData(tabName);
+        }
+
+        // Form visibility functions
+        function showCourseForm() {
+            document.getElementById('course-form').style.display = 'block';
+        }
+
+        function hideCourseForm() {
+            document.getElementById('course-form').style.display = 'none';
+        }
+
+        function showServiceForm() {
+            document.getElementById('service-form').style.display = 'block';
+        }
+
+        function hideServiceForm() {
+            document.getElementById('service-form').style.display = 'none';
+        }
+
+        function showAdForm() {
+            document.getElementById('ad-form').style.display = 'block';
+        }
+
+        function hideAdForm() {
+            document.getElementById('ad-form').style.display = 'none';
+        }
+
+        // Load tab data
+        function loadTabData(tabName) {
+            if (tabName === 'courses') {
+                loadCourses();
+            } else if (tabName === 'services') {
+                loadServices();
+            } else if (tabName === 'messages') {
+                loadMessages();
+            } else if (tabName === 'ads') {
+                loadAds();
+            }
+        }
+
+        // Load functions
+        function loadCourses() {
+            fetch('/api/admin/courses')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('courses-table');
+                    if (data.success && data.courses.length > 0) {
+                        tbody.innerHTML = data.courses.map(course => `
+                            <tr>
+                                <td>${course.title}</td>
+                                <td>${course.category}</td>
+                                <td>$${course.price}</td>
+                                <td>${course.enrolledStudents.length}</td>
+                                <td><span class="badge ${course.isPublished ? 'success' : 'warning'}">${course.isPublished ? 'Published' : 'Draft'}</span></td>
+                                <td>
+                                    <button class="btn btn-sm" onclick="editCourse('${course._id}')">Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteCourse('${course._id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No courses found</td></tr>';
+                    }
+                });
+        }
+
+        function loadServices() {
+            fetch('/api/admin/services')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('services-table');
+                    if (data.success && data.services.length > 0) {
+                        tbody.innerHTML = data.services.map(service => `
+                            <tr>
+                                <td>${service.name}</td>
+                                <td>${service.category}</td>
+                                <td>$${service.price}</td>
+                                <td><span class="badge ${service.availability === 'in-stock' ? 'success' : 'danger'}">${service.availability}</span></td>
+                                <td>
+                                    <button class="btn btn-sm" onclick="editService('${service._id}')">Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteService('${service._id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No services found</td></tr>';
+                    }
+                });
+        }
+
+        function loadMessages() {
+            fetch('/api/admin/messages')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('messages-container');
+                    if (data.success && data.messages.length > 0) {
+                        container.innerHTML = data.messages.map(message => `
+                            <div class="message-item" style="border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem; border-radius: var(--border-radius);">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <h4>${message.subject}</h4>
+                                        <p><strong>From:</strong> ${message.name} (${message.email})</p>
+                                        <p><strong>Phone:</strong> ${message.phone || 'Not provided'}</p>
+                                        <p><strong>Date:</strong> ${new Date(message.createdAt).toLocaleString()}</p>
+                                        <p><strong>Message:</strong> ${message.message}</p>
+                                    </div>
+                                    <div>
+                                        <span class="badge ${message.status === 'unread' ? 'danger' : 'success'}">${message.status}</span>
+                                        <div style="margin-top: 0.5rem;">
+                                            <button class="btn btn-sm" onclick="markAsRead('${message._id}')">Mark as Read</button>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteMessage('${message._id}')">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = '<p>No messages found</p>';
+                    }
+                });
+        }
+
+        function loadAds() {
+            fetch('/api/admin/ads')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('ads-table');
+                    if (data.success && data.ads.length > 0) {
+                        tbody.innerHTML = data.ads.map(ad => `
+                            <tr>
+                                <td>${ad.title}</td>
+                                <td>${ad.position}</td>
+                                <td><span class="badge ${ad.isActive ? 'success' : 'warning'}">${ad.isActive ? 'Active' : 'Inactive'}</span></td>
+                                <td>${ad.clicks}</td>
+                                <td>${ad.impressions}</td>
+                                <td>
+                                    <button class="btn btn-sm" onclick="toggleAd('${ad._id}')">${ad.isActive ? 'Deactivate' : 'Activate'}</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteAd('${ad._id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No advertisements found</td></tr>';
+                    }
+                });
+        }
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleString();
+            document.getElementById('footer-runtime').textContent = now.toLocaleString();
+        }
+
+        // Volume control
+        document.querySelector('input[name="volume"]').addEventListener('input', function(e) {
+            document.getElementById('volume-display').textContent = e.target.value;
+        });
+
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 1000);
+        loadCourses();
+        loadServices();
+        loadMessages();
+        loadAds();
+
+        // Update stats periodically
+        setInterval(() => {
+            fetch('/api/admin/stats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('total-visitors').textContent = data.visitors;
+                        document.getElementById('total-courses').textContent = data.courses;
+                        document.getElementById('unread-messages').textContent = data.unreadMessages;
+                        document.getElementById('active-ads').textContent = data.activeAds;
+                    }
+                });
+        }, 30000); // Update every 30 seconds
+    </script>
+</body>
+</html>
